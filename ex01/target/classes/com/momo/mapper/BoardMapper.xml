@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- mapper namespace 속성은 연결할 mapper의 interface 풀 경로로 작성 -->
+<mapper namespace="com.momo.mapper.BoardMapper">
+
+	<!-- 
+	😀 select 태그 작성  
+	
+		id 			: mapper의 메서드명
+		resultType 	: 기본타입
+					, 객체타입(select쿼리의 결과를 특정 클래스의 객체로 저장)
+					쿼리 실행 결과를 resultType의 속성에 저장  
+				
+		CDATA 		: 파서가 마크업이 아닌 문자로만 해석 할 수 있도록 처리
+						XML에서 부등호를 사용하기 위해 사용	 
+	-->
+ 
+<select id="getListXml" resultType="com.momo.vo.BoardVO">
+
+<![CDATA[
+	select * from tbl_board where bno>0
+]]>
+</select>
+
+	<!-- 
+	동적 쿼리 작성
+	mybatis는 내부적으로 preparedStatement를 활용함.
+	?-> #{속성}
+	
+	쿼리 작성시필요한 정보는 메서드의 매개변수를 통해 받아올 수 있음
+	 -->
+
+ <insert id="insert">
+	 insert into tbl_board (bno, title, content, writer) 
+	values (seq_board.nextval, #{title}, #{content}, #{writer})
+ </insert>
+ 
+  <insert id="insertSelectKey">
+ <!-- selectKey : 생성된 시퀀스 값을 vo객체의 속성에 저장 후 사용 -->
+    <selectKey keyProperty="bno" order="BEFORE" resultType="int">
+      select seq_board.nextval from dual
+    </selectKey>
+ 
+	 insert into tbl_board (bno, title, content, writer) 
+	values (#{bno}, #{title}, #{content}, #{writer})
+ </insert>
+ 
+ 	<select id="getOne" resultType="com.momo.vo.BoardVO">
+ 		select * from tbl_board where bno = #{bno}
+	</select>
+	
+	 <delete id="delete" >
+    	delete tbl_board where bno = #{bno}
+	 </delete>
+	 
+	 <update id="update" >
+    	update tbl_board
+		set title= #{title},
+		content=#{content},
+
+		updateDate = sysdate
+		where bno = #{bno}
+	</update>
+	
+	<select id="getTotalCnt" resultType="int">
+		select count(*) from tbl_board  
+	</select>
+</mapper>
