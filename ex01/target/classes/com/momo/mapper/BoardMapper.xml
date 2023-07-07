@@ -19,9 +19,18 @@
  
 <select id="getListXml" resultType="com.momo.vo.BoardVO">
 
-<![CDATA[
-	select * from tbl_board where bno>0
-]]>
+	<![CDATA[
+	select *
+		from( Select t.*, rownum rn
+			from(	
+				select * 
+				from tbl_board where bno>0 
+	]]>
+				<include refid="criteria"></include>
+				order by bno DESC
+			)t
+		)
+	where rn between #{startNo} and #{endNo}
 </select>
 
 	<!-- 
@@ -38,7 +47,7 @@
  </insert>
  
   <insert id="insertSelectKey">
- <!-- selectKey : 생성된 시퀀스 값을 vo객체의 속성에 저장 후 사용 -->
+ 	<!-- selectKey : 생성된 시퀀스 값을 vo객체의 속성에 저장 후 사용 -->
     <selectKey keyProperty="bno" order="BEFORE" resultType="int">
       select seq_board.nextval from dual
     </selectKey>
@@ -66,5 +75,33 @@
 	
 	<select id="getTotalCnt" resultType="int">
 		select count(*) from tbl_board  
+		where 1=1
+		
+		<include refid="criteria"></include>
 	</select>
+	<!-- 반복되는 쿼리를 미지 작성해놓고 재활용
+	
+	반복쿼리 사용<sql id>
+	선언 쿼리 사용<include refId>
+	변수 사용<property id>
+	 -->
+	
+	<sql id="criteria">
+		<choose>
+
+			
+			<when test="searchField =='title'">
+				and title like '%'||#{searchWord}||'%'
+			</when>
+			<when test="searchField =='content'">
+				and content like '%'||#{searchWord}||'%'
+			</when>
+			<when test="searchField =='writer'">
+				and writer like '%'||#{searchWord}||'%'
+			</when>
+			
+		</choose>
+	
+	</sql>
+
 </mapper>

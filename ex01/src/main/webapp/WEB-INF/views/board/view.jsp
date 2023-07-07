@@ -34,11 +34,12 @@
 <main class="container">
 	<div class="bg-light p-5 rounded">
 		<h2>상세보기</h2>
-	    <p class="lead">부트스트랩을 이용한 게시판 만들기.</p>
-	    <a class="btn btn-lg btn-primary" href="/board/list/" role="button">리스트 &raquo;</a>
-	  </div>
-	    <p></p>
-  <!-- 상세보기 -->
+	    <p class="lead">부트스트랩을 이용한 게시판 만들기✨ </p>
+	    <a class="btn btn-lg btn-primary" href="/board/list/?pageNo=${param.pageNo}&searchField=${param.searchField}&searchWord=${param.searchWord}" role="button">리스트 &raquo;</a>
+	 </div>
+	 <p></p>
+	    
+	 <!-- 상세보기 -->
 	<div class="list-group w-auto">   
 		<form method="get" name="viewForm">
 		<input type="text" name="bno" value="${board.bno }">
@@ -56,7 +57,7 @@
 			</div>
 			<div class="d-grid gap-2 d-md-flex justify-content-md-center">
 				<button type="submit" class="btn btn-primary btn-lg" onclick="requestAction('/board/edit')">수정</button>
-				<button type="submit" class="btn btn-secondary btn-lg" onclick="requestAction('/board/delete')">삭제</button>
+				<button type="button" class="btn btn-secondary btn-lg" onclick="location.href='/board/delete?bno=${board.bno}'">삭제</button>
 			</div>
 		</form>
 	</div>

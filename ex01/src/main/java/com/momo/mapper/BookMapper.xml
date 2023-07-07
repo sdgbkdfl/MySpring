@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- mapper namespace 속성은 연결할 mapper의 interface 풀 경로로 작성 -->
+<mapper namespace="com.momo.mapper.BookMapper">
+
+	<!-- 내꺼 -->
+	<select id="getList" resultType="com.momo.vo.BookVO">
+		select * 
+			from(
+					select t.* , rownum rn
+						from(
+								select no, title, rentyn, author, 
+								decode(rentyn,'Y', '대여중', '') rentStr
+								from book 
+								where 1=1
+					 			<include refid="criteria"></include>
+								order by no desc
+						)t
+			)
+		where rn between #{startNo} and #{endNo} order by rn desc
+	</select>
+	
+	
+	<!-- 총 건수 구하기 -->
+	<select id="getTotalCnt" resultType="int">
+		select count(*) from book where 1=1
+		<!-- MyBatis의 XML 설정 파일에서 사용되는 태그로 다른 XML 요소를 포함하고자 할 때 사용 -->
+		<include refid= "criteria"></include>
+	</select>
+	
+	
+		<sql id="criteria">
+		<choose>
+			<when test="searchField =='title'">
+				and title like '%'||#{searchWord}||'%'
+			</when>
+
+			<when test="searchField =='author'">
+				and author like '%'||#{searchWord}||'%'
+			</when>		
+		</choose>
+	</sql>
+	
+	<select id="getOne" resultType="com.momo.vo.BookVO">
+		select * from book where no=#{no}
+
+	</select>
+	
+	
+	
+
+</mapper>

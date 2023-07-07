@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>     
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,6 +20,15 @@
 	<link href="/resources/css/listStyle.css" rel="stylesheet">
 	<!-- link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 
+<script type="text/javascript">
+
+	//폼 이름 확인
+	function requestAction(url){
+		viewForm.action=url;
+		viewForm.submit();
+	}
+</script>
+
 </head>
 <body>
 
@@ -34,8 +44,7 @@
 	 <p></p>
 	 <!-- 글쓰기 -->
 	 <div class="list-group w-auto">
-	<form method="post" action="/board/write">
-	<input type="text" name="bno" value="${board.bno}">
+	<form method="post" action="/board/write" name="viewForm">
 		<div class="mb-3">
 		  <label for="title" class="form-label">제목</label>
 		  <input type="text" name="title" id="title" class="form-control" value="${board.title}" >
@@ -46,14 +55,23 @@
 		</div>
 		<div class="mb-3">
 		  <label for="writer" class="form-label">작성자</label>
-		  <input type="text" name="writer" id="writer" class="form-control" value="${board.writer}" >
+		  <input type="text" name="writer" id="writer" class="form-control" value="김첨지" >
 		</div>
 		
 		
 		
 		<div class="d-grid gap-2 d-md-flex justify-content-md-center">
-			<button type="reset" class="btn btn-primary btn-lg" >초기화</button>
-			<button type="submit" class="btn btn-secondary btn-lg" onclick="/list">제출</button>
+			<!-- bno가 빈문자열이 아닐 때 수정하기-->
+			<c:if test="${not empty board.bno}" var="res">
+				<input type="text" name="bno" value="${board.bno}">
+				<button type="submit" class="btn btn-secondary btn-lg" onclick="requestAction('/board/editAction')">수정하기</button>
+			</c:if>
+			
+			<!-- bno값 없으면 등록하기-->
+			<c:if test="${not res}">
+				<button type="submit" class="btn btn-secondary btn-lg" >제출</button>			
+			</c:if>
+				<button type="reset" class="btn btn-primary btn-lg" >초기화</button>
 		</div>
 		</form>
 	</div>
