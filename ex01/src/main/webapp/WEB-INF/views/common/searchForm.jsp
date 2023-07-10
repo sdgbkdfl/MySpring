@@ -23,7 +23,7 @@
 	  </div>
 	  <div class="col-auto">
 	    <label for="searchword" class="visually-hidden">검색어</label>
-	    <input type="text" class="form-control" name="searchWord" id="seachWord" placeholder="검색어" value="${pageDto.cri.searchWord}">
+	    <input type="text" class="form-control" name="searchWord" id="searchWord" placeholder="검색어" value="${pageDto.cri.searchWord}">
 	  </div>
 	  <div class="col-auto">
 	    <button type="submit" class="btn btn-primary mb-3 w-100" onclick="go(1)">검색</button>

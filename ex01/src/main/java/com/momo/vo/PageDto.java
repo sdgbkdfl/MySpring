@@ -24,15 +24,15 @@ public class PageDto {
 		this.cri = cri;
 		this.totalCnt = totalCnt;
 		
-		//페이지 블럭의 시작 번호
-		this.startNo = this.endNo-4;
 		//페이지 블럭의 끝번호(공식처럼 생각할 것)
-		this.endNo = (int)(Math.ceil(cri.pageNo/5.0) * 5);
+		this.endNo = (int)(Math.ceil(cri.getPageNo()/10.0) * 10);
+		//페이지 블럭의 시작 번호
+		this.startNo = this.endNo-9;
 		
 		//총게시물의 수를 페이지당 보여지는 게시물의 수로 나눠 실제 끝페이지 번호 구함
 		realEndNo = (int)(Math.ceil((totalCnt*1.0)/cri.getAmount()));
 		endNo = endNo>realEndNo ? realEndNo :endNo;
 		prev = startNo >1? true : false;
-		next = endNo == realEndNo ? false : true;
+		next = (endNo == realEndNo) ? false : true;
 	}
 }

@@ -61,7 +61,7 @@
 	</select>
 	
 	 <delete id="delete" >
-    	delete tbl_board where bno = #{bno}
+    	delete from tbl_board where bno = #{bno}
 	 </delete>
 	 
 	 <update id="update" >
@@ -79,7 +79,7 @@
 		
 		<include refid="criteria"></include>
 	</select>
-	<!-- 반복되는 쿼리를 미지 작성해놓고 재활용
+	<!-- 반복되는 쿼리를 미리 작성해놓고 재활용
 	
 	반복쿼리 사용<sql id>
 	선언 쿼리 사용<include refId>
@@ -87,9 +87,7 @@
 	 -->
 	
 	<sql id="criteria">
-		<choose>
-
-			
+		<choose>			
 			<when test="searchField =='title'">
 				and title like '%'||#{searchWord}||'%'
 			</when>

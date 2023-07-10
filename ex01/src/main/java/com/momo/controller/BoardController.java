@@ -27,6 +27,15 @@ public class BoardController {
 	 *  
 	 * @param model
 	 */
+	
+	@GetMapping("/reply/test")
+	public String test() {
+		return "/reply/test";
+	}
+	
+	
+	
+	
 	//왜 메세지 메서드가 두개지..?
 	//message는 모달창으로 만들어준거인듯
 	@GetMapping("msg")
@@ -161,7 +170,7 @@ public class BoardController {
 	
 	}
 	
-	@GetMapping
+	@GetMapping("delete")
 	public String delete(BoardVO board, RedirectAttributes rttr, Model model) {
 		int res = boardService.delete(board.getBno());
 
