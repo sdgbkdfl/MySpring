@@ -33,7 +33,7 @@
 <body>
   
  <%@include file="../common/header.jsp" %>  
-	    ${pageDto}
+
   
 	<main class="container">
 	  <div class="bg-light p-5 rounded">

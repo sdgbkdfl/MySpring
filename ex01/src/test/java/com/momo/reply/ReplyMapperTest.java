@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.momo.mapper.ReplyMapper;
+import com.momo.vo.Criteria;
 import com.momo.vo.ReplyVO;
 import com.sun.tools.sjavac.Log;
 
@@ -29,7 +30,11 @@ public class ReplyMapperTest {
 	@Test
 	public void test() {
 		assertNotNull(mapper);
-		List<ReplyVO> list = mapper.getList(50);
+		Criteria cri = new Criteria();
+		//setPageNo와 setAmount 순서 바뀌면 제대로 적용안됨
+		cri.setAmount(5); // 5개씩 출력
+		cri.setPageNo(1); // 1페이지
+		List<ReplyVO> list = mapper.getList(50, cri);
 		Log.info("list :" + list);
 	}
 	
@@ -53,5 +58,24 @@ public class ReplyMapperTest {
 		
 		assertEquals(1, res);
 	}
+	
+	@Test
+	public void updateTest() {
+		ReplyVO replyVo = new ReplyVO();
+		replyVo.setBno(50);
+		replyVo.setReply("댓글 수정");
+		replyVo.setReplyer("댓글작성자");
+		
+		int res= mapper.update(replyVo);
+		
+		//결과값 한건인지 체크
+		assertEquals(res, 1);
+	}
+	@Test
+	public void totalCntTest() {
+		int res = mapper.totalCnt(50);
+		System.out.println(res);
+	}
+	
 	
 }

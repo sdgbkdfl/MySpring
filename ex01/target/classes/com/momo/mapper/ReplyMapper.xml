@@ -7,12 +7,21 @@
 <!-- rno:게시물 답글번호? -->
 
 
-	<!-- 댓글조회 -->
+	<!-- 댓글조회
+	select태그는 반환타입(resultType)없으면 오류발생 -->
 	<select id="getList" parameterType="int" resultType="com.momo.vo.ReplyVO">
-		select rno, bno, reply, replyer, to_char(replyDate,'yyyy-MM-dd') replyDate, updateDate 
-		from tbl_reply
-		where bno = #{bno}
-		order by rno desc
+		select * 
+		from(
+			select t.*, rownum rn
+			from(
+				select rno, bno, reply, replyer, to_char(replyDate,'yyyy-MM-dd') replyDate, updateDate 
+				from tbl_reply
+				where bno = #{bno}
+				order by rno desc
+			)t
+		)
+		where rn between #{cri.startNo} and #{cri.endNo}
+	
 	</select>
 	
 	<!-- 댓글 작성 -->
@@ -30,9 +39,14 @@
 	<update id="update">
 		 update tbl_reply 
 		 set reply = #{reply}, 
-			updatedate = sysdate 
-			where rno =#{rno}		
+			updateDate = sysdate 
+		 where rno =#{rno}		
 	</update>
-
+	
+	<select id="totalCnt" resultType="int">
+		select count (*) 
+		from tbl_reply 
+		where bno=#{bno}
+	</select>
 
 </mapper>
