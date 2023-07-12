@@ -92,15 +92,22 @@ public class ReplyController {
 	 */
 	@PostMapping("/reply/insert")
 	public Map<String, Object> insert(@RequestBody ReplyVO replyVo){
-		int res = service.insert(replyVo);
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		if(res>0) {
-			map.put("result", "success");
-		}else {
-			map.put("result","fail");
-			map.put("message", "댓글 등록 중 오류가 발생하였습니다.");
+		try {
+			int res = service.insert(replyVo);
+			
+			if(res>0) {
+				map.put("result", "success");
+			}else {
+				map.put("result","fail");
+				map.put("message", "댓글 등록 중 오류가 발생하였습니다.");
+			}	
+		}catch(Exception e) {
+			map.put("result", "fail");
+			map.put("message", "e.getMessage");
+			
 		}
 		return map;
 	}
@@ -109,6 +116,7 @@ public class ReplyController {
 	public Map<String, Object> delete(@PathVariable("rno") int rno){
 		Map<String, Object> map = new HashMap<String, Object>();
 
+		
 		int res = service.delete(rno);
 
 		if(res>0) {

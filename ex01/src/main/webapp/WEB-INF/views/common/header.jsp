@@ -5,6 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+</head>
 <script type="text/javascript">
 		//메세지 처리
 		let msg = '${msg}';
@@ -34,7 +35,6 @@
 
 		}		
 </script>
-</head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
   <div class="container-fluid">
