@@ -38,4 +38,9 @@
 
 		<!-- 인터페이스 생성 위치 -->
 		<mybatis-spring:scan base-package="com.momo.mapper"/>
+		
+		<!-- 비밀번호 암호화를 위한 설정 (자동주입)-->
+		<bean id="bcryptPasswordEncoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+		</bean>
 </beans>

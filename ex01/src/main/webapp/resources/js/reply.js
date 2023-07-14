@@ -1,6 +1,6 @@
 console.log('reply.js=========')
 
-// get방식 요청
+//get방식 요청 함수(url과 callback함수만 넣어주면 호출 가능)
 function fetchGet(url, callback){
 	try{
 		// url 요청
@@ -14,7 +14,7 @@ function fetchGet(url, callback){
 	}
 }
 
-// post방식 요청
+//post방식 요청
 function fetchPost(url, obj, callback){
 	try{
 		// url 요청
@@ -34,12 +34,20 @@ function fetchPost(url, obj, callback){
 	
 }
 
-
 //댓글 조회 및 출력
-function getReplyList(){
+function getReplyList(page){
+	
+	/**
+	 * falsey :  false, 0, "", undefined, null
+	 *  - falsey 이외의 값일 경우 true 반환
+	 */
+	if(!page){
+		page = 1;
+	}
+	
 	let bno = document.querySelector('#bno').value;
 //	let bno = 50;
-	let page = '1';
+//	let page = '1';
 	console.log('bno:', bno);
 	
 	console.log('/reply/list/' + bno + '/' + page);
@@ -51,46 +59,75 @@ function getReplyList(){
 	// 함수를 변수처럼 전달
 }
 
+// 리스트 결과를 받아 화면 출력
 function replyView(map){
 	let list = map.list;
+	let pageDto = map.pageDto;
+	
 	console.log(list);
+	console.log('pageDto====>', pageDto);
+	
 	// 리스트 사이즈를 확인하여 메세지 처리
 	if(list.length ==0){
 		replyDiv.innerHTML = '등록된 댓글이 없습니다.'
 	}else{
-	let replyDivStr = '댓글목록'
-			+'<table class="table text-break text-center">    			'
-			+'  <thead>                                       			'
-			+'    <tr>                                        			'
-			+'      <th scope="col-1">#</th>                  			'
-			+'      <th scope="col-9">댓글</th>                			'
-			+'      <th scope="col-2">작성자</th>               			'
-			+'      <th scope="col-1">등록일자</th>             			'
-			+'    </tr>                                      			'                                     
-			+'  </thead>                                     			'
-			+'  <tbody>      					              			';
-		// 리스트를 돌며 댓글목록 출력
-		list.forEach((reply, rno)=>{
+		let replyDivStr = '댓글목록'
+				+'<table class="table text-break text-center">    			'
+				+'  <thead>                                       			'
+				+'    <tr>                                        			'
+				+'      <th scope="col-1" >#</th>                  			'
+				+'      <th scope="col-9">댓글</th>                			'
+				+'      <th scope="col-1"></th>             				'
+				+'      <th scope="col-2">작성자</th>               			'
+				+'      <th scope="col-1">등록일자</th>             			'
+				+'    </tr>                                      			'                                     
+				+'  </thead>                                     			'
+				+'  <tbody>      					              			';
+		
+		// 리스트를 돌며 댓글목록 생성
+		list.forEach(reply =>{
 			replyDivStr += 
-			 '    <tr id="tr'+reply.rno+'">                             '
-			+'      <th scope="row">'+reply.rno+'</th>					'
-			+'      <td class="text-start">'+reply.reply
-			+'			<i class="fa-regular fa-pen-to-square"			'
-			+'				onclick="replyEdit('+reply.rno+')"></i>		'
-			+'			<i class="fa-solid fa-delete-left" 				'
-			+'				onclick="replyDelete('+reply.rno+')"></i>	'
-			+'		</td> 												'
-			+'      <td>'+reply.replyer									
-			+'		</td>                            					'
-			+'      <td>'+reply.replydate+'</td>                        '
-			+'    </tr>  												';	
+				 '   <tr id="tr'+reply.rno+'" data-value="'+reply.reply+'" >'
+				+'      <th scope="row">'+reply.rno+'</th>					'
+				+'      <td class="text-start">'+reply.reply
+				+'		</td> 												'
+				+'      <td text-center>									'
+				+'			<i class="fa-regular fa-pen-to-square"			'
+				+'				onclick="replyEdit('+reply.rno+')"></i>		'
+				+'			<i class="fa-solid fa-delete-left" 				'
+				+'				onclick="replyDelete('+reply.rno+')"></i>	'
+				+'		</td>						                        '
+				+'      <td>'+reply.replyer									
+				+'		</td>                            					'
+				+'      <td>'+reply.replydate+'</td>                        '
+				+'   </tr>  												';	
 		})
 			replyDivStr +=
-			 '</tbody>                              					'
-			+'</table>                                       			';
+				 '</tbody>                              					'
+				+'</table>                                       			';
 		       				
-			
+			// 화면에 출력
 			replyDiv.innerHTML = replyDivStr;
+			
+		// 페이지 블럭 생성
+			let pageBlock = 
+				  `<nav aria-label="...">                                                 `
+				+ `  <ul class="pagination justify-content-center">                                              `
+				+ `    <li class="page-item disabled">                                    `
+				+ `      <a class="page-link">Previous</a>                                `
+				+ `    </li>                                                              `
+				+ `    <li class="page-item"><a class="page-link" href="#">1</a></li>     `
+				+ `    <li class="page-item active" aria-current="page">                  `
+				+ `      <a class="page-link" href="#">2</a>                              `
+				+ `    </li>                                                              `
+				+ `    <li class="page-item"><a class="page-link" href="#">3</a></li>     `
+				+ `    <li class="page-item">                                             `
+				+ `      <a class="page-link" href="#">Next</a>                           `
+				+ `    </li>                                                              `
+				+ `  </ul>                                                                `
+				+ `</nav>                                                                 `;
+			                                                                      
+		replyDiv.innerHTML += pageBlock;			
 	}	
 }
 
@@ -141,28 +178,39 @@ function replyDelete(rno){
 // 답글 수정화면 요청
 function replyEdit(rno){
 	// 요소 선택(#아이디 값)
-	let editForm = document.querySelector("#tr"+rno) 
+	let editTr = document.querySelector("#tr"+rno) 
 	// editForm 요소의 data-value 속성 값을 replyTxt 변수에 할당
-	// let replyTxt = editForm.dataset.value;
+	let replyTxt = editTr.dataset.value;
 	
+	console.log('editTr', editTr); //id=tr70
+	console.log('replyTxt', replyTxt); //undefined가 뜸 ㅜㅜ
 	
-	editForm.innerHTML = '<td colspan="3">											   '                                                                          
-		+'<div class="input-group">                                                    '
-		+'  <span class="input-group-text">댓글 수정 </span>                              '
-		+'  <input type="text" aria-label="First name" 								   '
-		+'		id="reply'+rno+'" class="form-control" id="reply">                     '
-		+'  <input type="button" aria-label="Last name" 							   '
-		+'		onclick="replyEditAction" class="input-group-text" value="수정하기">	   '
-		+'</div>                                                                       ';
+	editTr.innerHTML = '<td colspan="3">											   				   '                                                                          
+						+'<div class="input-group">                                                    '
+						+'  <span class="input-group-text">댓글 수정 </span>                              '
+						+'  <input type="text" aria-label="First name" 								   '
+						+'		id="reply'+rno+'" class="form-control" value="'+replyTxt+'">           '
+						+'  <input type="button" aria-label="Last name" 							   '
+						+'		onclick="replyEditAction('+rno+')" 									   '
+						+'			class="input-group-text" value="수정하기">	   					   '
+						+'</div>                                                                       '
+						+ '</td>';
 }                                                                                                                    
 
 // 수정 처리
-
-
-
-
-
-
+function replyEditAction(rno){
+	// 수정되어지는 댓글의 아이디값 파라메터로 수집
+	let reply = document.querySelector('#reply'+rno).value;
+	
+	// 서버로 전송할 데이터를 JS 객체로 생성
+	let obj = {
+			rno : rno
+			, reply : reply
+	}
+	
+	// 서버에 요청
+	fetchPost('/reply/editAction', obj, replyRes);
+}
 
 
 

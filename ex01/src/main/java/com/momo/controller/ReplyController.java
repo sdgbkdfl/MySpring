@@ -21,14 +21,12 @@ import lombok.extern.log4j.Log4j;
 /**
  * RestController
  *  Controller가 Rest방식을 처리하기 위한 것임을 명시
- *  
- * @author user
  *
  */
 
 @RestController
 @Log4j
-public class ReplyController {
+public class ReplyController extends CommonRestController{
  
 	
 	@Autowired
@@ -79,13 +77,15 @@ public class ReplyController {
 		map.put("list",list);
 		map.put("pageDto",pageDto);
 		
-		return map;
+		return responseListMap(list, pageDto);
 	}
 	
 	
+
+
 	/**
 	 * RequestBody
-	 * 	json 데이터를 원하는 타입(EX: map)으로 바인딩 처리
+	 * 	json 데이터를 원하는 타입(ex: map)으로 바인딩 처리
 	 *	파라메터의 자동수집 역할 
 	 * @param replyVo
 	 * @return
@@ -97,13 +97,14 @@ public class ReplyController {
 		
 		try {
 			int res = service.insert(replyVo);
+			return map = responseWriteMap(res);
 			
-			if(res>0) {
-				map.put("result", "success");
-			}else {
-				map.put("result","fail");
-				map.put("message", "댓글 등록 중 오류가 발생하였습니다.");
-			}	
+//			if(res>0) {
+//				map.put("result", "success");
+//			}else {
+//				map.put("result","fail");
+//				map.put("message", "댓글 등록 중 오류가 발생하였습니다.");
+//			}	
 		}catch(Exception e) {
 			map.put("result", "fail");
 			map.put("message", "e.getMessage");
@@ -114,40 +115,40 @@ public class ReplyController {
 	
 	@GetMapping("/reply/delete/{rno}")
 	public Map<String, Object> delete(@PathVariable("rno") int rno){
-		Map<String, Object> map = new HashMap<String, Object>();
+//		Map<String, Object> map = new HashMap<String, Object>();
+//		
+//		int res = service.delete(rno);
+//
+//		if(res>0) {
+//			map.put("result", "success");
+//		}else {
+//			map.put("result","fail");
+//			map.put("message", "댓글 삭제 중 오류가 발생하였습니다.");
+//		}
+//		
+		return responseDeleteMap(service.delete(rno));
 
-		
-		int res = service.delete(rno);
-
-		if(res>0) {
-			map.put("result", "success");
-		}else {
-			map.put("result","fail");
-			map.put("message", "댓글 삭제 중 오류가 발생하였습니다.");
-		}
-		
-		return map;
 	}
 	
-	/**
-	 * update
-	 * @param replyVo
-	 * @return
-	 */
+
 	@PostMapping("/reply/editAction")
-	public Map<String, Object> update(@RequestBody ReplyVO replyVo){
-		
+	public Map<String, Object> update(@RequestBody ReplyVO replyVo){		
 		Map<String, Object> map = new HashMap<String, Object>();
+		
 		int res = service.update(replyVo);
 		
 		if(res>0) {
 			map.put("result", "success");
+			//map.put("message", "댓글이 수정되었습니다.");
+			
 		}else {
 			map.put("result","fail");
 			map.put("message", "댓글 수정 중 오류가 발생하였습니다.");
 		}
 		return map;
 	}
-		
+	
+	
+
 	
 }

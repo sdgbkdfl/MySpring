@@ -32,10 +32,7 @@ public class BoardController {
 	public String test() {
 		return "/reply/test";
 	}
-	
-	
-	
-	
+
 	//왜 메세지 메서드가 두개지..?
 	//message는 모달창으로 만들어준거인듯
 	@GetMapping("msg")
@@ -148,7 +145,7 @@ public class BoardController {
 		return "/board/write";
 	}
 	@PostMapping("editAction")
-	public String editAction(BoardVO board, RedirectAttributes rttr ,Model model){
+	public String editAction(BoardVO board, RedirectAttributes rttr ,Model model, Criteria cri){
 		//수정
 		int res = boardService.update(board);
 		
@@ -157,6 +154,12 @@ public class BoardController {
 			
 			//model.addAttribute("msg","수정되었습니다.");
 			rttr.addFlashAttribute("msg","수정되었습니다.");
+			
+			// 검색 유지
+			// addAttribute : 컨트롤러에서 처리한 데이터를 뷰로 전달
+			rttr.addAttribute("pageNo", cri.getPageNo());
+			rttr.addAttribute("searchField", cri.getSearchField());
+			rttr.addAttribute("searchWord", cri.getSearchWord());
 			
 			//상세페이지로 이동
 			return "redirect:/board/view?bno="+board.getBno();

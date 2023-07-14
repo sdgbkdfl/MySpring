@@ -27,6 +27,16 @@
 		viewForm.action=url;
 		viewForm.submit();
 	}
+	
+	// 게시물 수정 후에도 검색어 유지
+	window.addEventListener('load', function(){
+		btnList.addEventListener('click', function(){
+			viewForm.action ="/board/list";
+			viewForm.method = get();
+			viewForm.submit();
+		})
+		
+	})
 </script>
 
 </head>

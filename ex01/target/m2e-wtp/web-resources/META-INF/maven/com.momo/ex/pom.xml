@@ -204,6 +204,15 @@
 		    <artifactId>commons-fileupload</artifactId>
 		    <version>1.5</version>
 		</dependency>
+		
+		<!-- 비밀번호 암호화 및 인증 -->
+		<!-- Spring Security core https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-core</artifactId>
+		    <version>5.0.7.RELEASE</version>
+		</dependency>
+		
 	
 		<!-- Test -->
 		<dependency>

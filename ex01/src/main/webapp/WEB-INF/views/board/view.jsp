@@ -21,7 +21,7 @@
 <!-- CSS -->
 <link href ="/resources/css/listStyle.css" rel="stylesheet">
 <!-- JS -->
-<script src="/resources/js/reply.js">
+<script src="/resources/js/reply.js"></script>
 
 </head>
 <body>
@@ -51,13 +51,14 @@
 			viewForm.submit();
 
 		});
-		// 댓글 목록 조회 및 출력
-		getReplyList();
 		
 		// 댓글 등록 버튼 
 		btnReplyWrite.addEventListener('click', function(){
 			replyWrite();
 		});
+		// 댓글 목록 조회 및 출력
+		getReplyList();
+		
 	}); 
 	<!--
 	function requestAction(url){
@@ -81,7 +82,8 @@
 	<div class="list-group w-auto">   
 		<form method="get" name="viewForm">
 		
-		<!-- 검색할 때 필요한 값들 링크에 달고 다니지 말고 필드로 설정해주는 것이 더 유용
+		<!-- 파라메터 
+		검색할 때 필요한 값들 링크에 달고 다니지 말고 필드로 설정해주는 것이 더 유용
 		pageNo=${param.pageNo}
 		&searchField=${param.searchField}
 		&searchWord=${param.searchWord}
@@ -110,25 +112,23 @@
 		</form>
 	</div>
 	<p></p>
-	<input type="text" id="replyer" value="작성자">
+	<p></p>
 	<div class="input-group">
+	<span class="input-group-text">작성자 </span>
+	<input type="text" id="replyer" value="김첨지">
 	  <span class="input-group-text">댓글 작성 </span>
 	  <input type="text" aria-label="First name" class="form-control" id="reply">
 	  <input type="button" aria-label="Last name" id="btnReplyWrite" class="input-group-text" value="등록하기">
 	</div>
-	
-	
-	
-	
+		
 	<!-- 댓글리스트 -->
-<div id="replyDiv">
+<div id="replyDiv"></div>
 
-</div>
+
 </main>
 	
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 
 	
-
 </body>
 </html>

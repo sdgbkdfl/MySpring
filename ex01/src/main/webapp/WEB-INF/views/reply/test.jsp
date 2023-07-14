@@ -171,6 +171,7 @@
 		
 		// 댓글 삭제 함수
 		function replyDelete(rno){
+
 			// url의 요청 결과 받아옴
 			fetch('/reply/delete/'+rno)
 			// 요청결과(json형식의 문자열)를 js object형식으로 반환
@@ -178,7 +179,7 @@
 			// 반환받은 오브젝트를 이용하여 화면 출력
 			// (반환값에 대한 이름 : map)
 			.then(map => replyWrite(map));
-			alert(rno+"번 댓글이 삭제되었습니다.");
+			alert(rno+"번 댓글이 삭제되었습니다.");			
 		}
 		
 		// 수정 화면 출력 요청
