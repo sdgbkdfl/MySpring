@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.momo.mapper.BoardMapper;
 import com.momo.vo.BoardVO;
@@ -16,10 +18,10 @@ import com.momo.vo.PageDto;
  * 느슨한결합 : 하나의 콤포넌트의 변경이 다른 컴포넌트들의 변경을 요구하는  위험을 줄이는 것을 
  * 			목적으로 하는 시스템에서  콤포넌트 간의 내부 의존성을 줄이는 것을 추구하는 디자인 목표
  * 
- * 😀 Service
+ *  Service
  * 		계층 구조상 비즈니스 영역을 담당하는 객체임을 표시
  * 
- * 😀 root-context.xml
+ *  root-context.xml
  * 		component-scan 속성에 패키지를 등록 합니다.
  * 
  *  
@@ -42,6 +44,9 @@ public class BoardServiceImpl implements BoardService {
 	@Autowired
 	private BoardMapper boardMapper;
 
+	@Autowired
+	private AttachService attachService;
+	
 	@Override
 	public List<BoardVO> getListXml(Criteria cri, Model model) {
 		/**
@@ -58,45 +63,63 @@ public class BoardServiceImpl implements BoardService {
 		model.addAttribute("totalCnt", totalCnt);
 		model.addAttribute("pageDto", pageDto);
 		
-		return boardMapper.getListXml(cri);
-		
+		return null;
 	}
 
 	@Override
 	public int insert(BoardVO board) {
-		
 		return boardMapper.insert(board);
 	}
 
 	@Override
-	public int insertSelectKey(BoardVO board) {
+	@Transactional(rollbackFor = Exception.class)
+	public int insertSelectKey(BoardVO board, 
+					List<MultipartFile> files) throws Exception {
 		
-		return boardMapper.insertSelectKey(board);
+		// 게시물 등록
+		int res = boardMapper.insertSelectKey(board);
+		
+		// 파일 첨부
+		attachService.fileupload(board.getBno(), files);
+		
+		return res;
 	}
 
 	@Override
 	public BoardVO getOne(int bno) {
-		// TODO Auto-generated method stub
 		return boardMapper.getOne(bno);
 	}
 
 	@Override
 	public int delete(int bno) {
-		// TODO Auto-generated method stub
+		// 게시물을 삭제시 첨부된 파일이 있는경우 오류가 발생
+		// 첨부파일을 모두 삭제
+		// 첨부파일 리스트 조회 - fileuploadService
+		// 리스트를 돌면서 
+		// 삭제 처리 - fileuploadService 
 		return boardMapper.delete(bno);
 	}
 
 	@Override
-	public int update(BoardVO board) {
-		// TODO Auto-generated method stub
-		return boardMapper.update(board);
+	public int update(BoardVO board, List<MultipartFile> files)throws Exception {
+		// 게시물 등록
+		int res = boardMapper.update(board);
+		
+		attachService.fileupload(board.getBno(), files);
+		
+		return res;
 	}
 
 	@Override
 	public int getTotalCnt(Criteria criteria) {
-		// TODO Auto-generated method stub
 		return boardMapper.getTotalCnt(criteria);
 	}
+
+	@Override
+	public int updateReplyCnt(int bno, int amount) {
+		return boardMapper.updateReplyCnt(bno, amount);
+	}
+	
 
 	
 }

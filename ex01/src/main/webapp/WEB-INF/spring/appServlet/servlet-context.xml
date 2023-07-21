@@ -21,7 +21,25 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<context:component-scan base-package="com.momo" />
+	<context:component-scan base-package="com.momo.controller" />
+	<context:component-scan base-package="com.momo.intercepter" />
+	
+	<interceptors>
+		<!-- 로그인체크 -->
+			<interceptor>
+				<mapping path="/board/*"/>
+				<exclude-mapping path="/board/login"/>
+				<beans:ref bean="loginInterceptor"/>
+			</interceptor>	
+			
+		<!-- 관리자 체크 -->
+		<interceptor>
+			<mapping path="/admin**"/>
+			<beans:ref bean="adminInterCeptor"/>
+		</interceptor>
+	
+	
+	</interceptors>
 	
 	
 	

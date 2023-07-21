@@ -99,7 +99,14 @@
 			</when>
 			
 		</choose>
-	
 	</sql>
+	
+	<update id="updateReplyCnt">
+
+ 		update tbl_board set replycnt = replycnt + #{amount} where bno = #{bno}
+	
+	</update>
+	
+	
 
 </mapper>

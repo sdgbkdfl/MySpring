@@ -2,6 +2,8 @@ package com.momo.mem;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,5 +52,10 @@ public class MemberTest {
 		
 		int res = memberMapper.idCheck(member);
 		assertEquals(1, res);
-	}	
+	}
+	public void testGetMemberRole() {
+		List<String> list = memberMapper.getMemberRole("ADMIN");
+		System.out.println(list);
+		System.out.println("관리자 권한"+list);
+	}
 }

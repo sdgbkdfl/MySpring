@@ -29,6 +29,9 @@
 						, replyer : replyer
 				};
 				
+				// 서버에 요청
+				fetchPost('/reply/insert', replyObj, replyWriteRes);				
+				/*
 				// 3.생성 객체를 json타입으로 변환
 				let replyJson =JSON.stringify(replyObj);
 				
@@ -43,7 +46,7 @@
 				
 				// 5.응답받아옴
 				.then(response => response.json())
-				.then(map => replyWrite(map));	
+				.then(map => replyWrite(map));*/	
 			});
 		}
 	
@@ -54,15 +57,17 @@
 		let bno = document.querySelector("#bno").value;
 		let page = document.querySelector("#page").value;
 
+		fetchGet('/reply/list/' + bno + '/' + page, replyView);
 		
+		
+		/*
 		// url의 요청 결과 받아옴
 		fetch('/reply/list/'+bno+'/'+page)
 		// 요청결과(json형식의 문자열)를 js object형식으로 반환
 		.then(response => response.json())
 		// 반환받은 오브젝트를 이용하여 화면 출력 함수 호출
-		.then(map => replyView(map));
+		.then(map => replyView(map));*/
 	}
-	
 	
 	// 페이지 번호를 클릭했을 때 호출되어 페이지 번호를 설정하고,
 	// getList() 함수를 호출(해당 페이지 목록 호출)
@@ -223,6 +228,38 @@
 			alert("수정되었습니다.")
 	
 		}
+		
+		function fetchGet(url, callback){
+			try{
+				// url 요청
+				fetch(url)
+					// 요청결과 json문자열을 javascript 객체로 반환
+					.then(response => response.json())
+					// 콜백함수 실행
+					.then(map => callback(map));			
+			}catch(e){
+				console.log('fetchGet',e);
+			}
+		}
+		function fetchPost(url, obj, callback){
+			try{
+				// url 요청
+				fetch(url
+						, {
+							method : 'post'
+							, headers : {'Content-Type' : 'application/json'}
+							, body : JSON.stringify(obj)
+						})
+					// 요청결과 json문자열을 javascript 객체로 반환
+					.then(response => response.json())
+					// 콜백함수 실행
+					.then(map => callback(map));			
+			}catch(e){
+				console.log('fetchPost', e);
+			}
+			
+		}
+		
 </script>
 </head>
 <body>

@@ -36,5 +36,8 @@ public interface ReplyMapper {
 	//댓글 총건수 구하기
 	public int totalCnt(int bno);
 	
+	//??
+	public ReplyVO getOne(int rno);
+	
 	
 }

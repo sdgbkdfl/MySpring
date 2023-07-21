@@ -71,9 +71,20 @@ public class MemberController extends CommonRestController {
 			session.setAttribute("userId", member.getId());
 			// userId : header.jsp에서 로그아웃 처리할때도 사용
 			
-			return responseMap(1,"로그인");
+			Map<String, Object> map = responseMap(REST_SUCCESS, "로그인 되었습니다.");
+			
+			if(member.getRole() != null 
+					&& member.getRole().contains("ADMIN_ROLE")) {
+				// 관리자 로그인 -> 관리자 페이지로 이동
+				map.put("url", "/admin");
+			} else {
+				map.put("url", "/board/list");
+			}
+			
+			return map;
+			
 		}else {
-			return responseMap(0,"로그인");
+			return responseMap(REST_FAIL, "아이디와 비밀번호를 확인해주세요");
 		}
 	}
 	
@@ -83,9 +94,9 @@ public class MemberController extends CommonRestController {
 		
 		if(res == 0) {
 			// count = 1이면 fail(회원가입 불가) (res, msg)
-			return responseMap(REST_SUCCESS,"로그인 되었습니다.");
+			return responseMap(REST_SUCCESS,"사용가능한 아이디 입니다.");
 		}else {
-			return responseMap(REST_FAIL,"아이디 비밀번호를 확인바랍니다.");	
+			return responseMap(REST_FAIL,"이미 사용중인 아이디 입니다.");	
 		}
 	}
 	@PostMapping("/register")

@@ -35,14 +35,27 @@
  <%@include file="../common/header.jsp" %>  
 
 	<main class="container">
-	  <div class="bg-light p-5 rounded">
-	  	<br>
-	    <h3>게시판</h3>
-	    <p class="lead">부트스트랩을 이용한 게시판 만들기✨</p>
-	    <a class="btn btn-lg btn-primary" href="/board/write/" role="button">글쓰기 &raquo;</a>
-	  </div>
-
+		  <div class="bg-light p-5 rounded">
+		  	<br>
+		    <h3>게시판</h3>
+		    <p class="lead">부트스트랩을 이용한 게시판 만들기✨</p>
+		    <a class="btn btn-lg btn-secondary" href="/board/write/" role="button">글쓰기 &raquo;</a>
+		  </div>
 	    <%@include file="../common/searchForm.jsp" %>
+		<div id="carouselExampleInterval" class="carousel slide ratio ratio-4x3" data-bs-ride="carousel">
+		  <div class="carousel-inner">
+		    <div class="carousel-item active" data-bs-interval="3000">
+		      <img src="../resources/brand/turkey.jpg" class=" w-100" alt="redboy">
+		    </div>
+		    <div class="carousel-item" data-bs-interval="2000">
+		      <img src="../resources/brand/snownight.jpg" class="d-block w-100" alt="night">
+		    </div>
+		    <div class="carousel-item">
+		      <img src="../resources/brand/cityview.jpg" class="d-block w-100" alt="image">
+		    </div>
+		  </div>
+		</div>
+
 		<!-- 리스트 출력 -->
 		<div class="list-group w-auto">
 		

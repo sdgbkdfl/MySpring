@@ -1,13 +1,16 @@
 package com.momo.controller;
 
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.momo.service.BoardService;
@@ -60,27 +63,33 @@ public class BoardController {
 	 * @param cri
 	 */
 	@GetMapping("list")
-	public void getList(Model model, Criteria cri) {
+	public void getList( Criteria cri, Model model) {
+		// 실행시간 구하기
+		StopWatch stopwatch = new StopWatch();
+		stopwatch.start();
 		//서비스 호출
 		//List<BoardVO> list = 
-				
 		boardService.getListXml(cri, model);
 		
+				
 		log.info("=========list");
-//		log.info("list:" +list);
+//		log.info("list:" + list);
 	    log.info("cri :"+cri);
 	    
-//	    model.addAttribute("list", list);
-// 알림주기 위해 model객체를 서비스에 전달하여 service에서 알림 처리..	    
-
+	    // model.addAttribute("list", list);
+	    // 알림주기 위해 model객체를 서비스에 전달하여 service에서 알림 처리..	    
+	    
+	    stopwatch.stop();
+	    log.info("수행시간 : "+stopwatch.getTotalTimeMillis()+"(ms)초");
 	}
+	
 	@GetMapping("view")
 	public void getOne(Model model, BoardVO paramVo) {
 		log.info("bno"+paramVo);
-		model.addAttribute("board", boardService.getOne(paramVo.getBno()));
+//		model.addAttribute("board", boardService.getOne(paramVo.getBno()));
 
-//		BoardVO board = boardService.getOne(paramVO.getBno());
-//		model.addAttribute("board", board);
+		BoardVO board = boardService.getOne(paramVo.getBno());
+		model.addAttribute("board", board);
 	}
 	
 	/**
@@ -108,27 +117,61 @@ public class BoardController {
 	 * @return
 	 */
 	@PostMapping("write")
-	public String writeAction(BoardVO board, RedirectAttributes rttr, Model model) {
+	public String writeAction(BoardVO board, List<MultipartFile> files,RedirectAttributes rttr, Model model) {
 		log.info(board);
 
-		//시퀀스 조회후 시퀀스 번호를 bno에 저장
-		int res = boardService.insertSelectKey(board);
-		
+		// 시퀀스 조회후 시퀀스 번호를 bno에 저장
+		// 게시물 등록 및 파일 첨부
+		int res;
+		try {
+		// 시퀀스 조회 후 시퀀스 번호를 bno에 저장
+		// 게시물등록및 파일 첨부
+		res = boardService.insertSelectKey(board, files);
 		String msg = "";
-		
 		if(res > 0) {
+			
 			msg = board.getBno() + "번 등록되었습니다";
-			rttr.addFlashAttribute("msg", msg);
+			// url?msg=등록 (쿼리스트링으로 전달 -> param.msg)
 			//rttr.addAttribute("msg", msg);
+			
+			// 세션영역에 저장 -> msg
+			// 새로고침시 유지되지 않음
+			rttr.addFlashAttribute("msg", msg);
+			
 			return "redirect:/board/list";
-			//redirect : 저장한 데이터가 그대로 유지되지 않음
-			//다른 방법 : RedirectAttributes 사용
-		}else {
-			msg = "등록 중 예외 발생하였습니다.";
+			
+		} else {
+			msg = "등록중 예외사항이 발생 하였습니다.";
 			model.addAttribute("msg", msg);
 			return "/board/message";
-			
 		}
+	
+	} catch (Exception e) {
+		log.info(e.getMessage());
+		if(e.getMessage().indexOf("첨부파일")>-1) {
+			model.addAttribute("msg", e.getMessage());
+		} else {
+			model.addAttribute("msg", "등록중 예외사항이 발생 하였습니다.");
+		}
+		
+		return "/board/message";
+	}
+		
+//		String msg = "";
+		
+//		if(res > 0) {
+//			msg = board.getBno() + "번 등록되었습니다";
+//			rttr.addFlashAttribute("msg", msg);
+//			//rttr.addAttribute("msg", msg);
+//			return "redirect:/board/list";
+//			//redirect : 저장한 데이터가 그대로 유지되지 않음
+//			//다른 방법 : RedirectAttributes 사용
+//		}else {
+//			msg = "등록 중 예외 발생하였습니다.";
+//			model.addAttribute("msg", msg);
+//			return "/board/message";
+//			
+//		}
 		
 	}
 	@GetMapping("edit")
@@ -145,32 +188,41 @@ public class BoardController {
 		return "/board/write";
 	}
 	@PostMapping("editAction")
-	public String editAction(BoardVO board, RedirectAttributes rttr ,Model model, Criteria cri){
+	public String editAction(BoardVO board, List<MultipartFile> files 
+								,RedirectAttributes rttr ,Model model, Criteria cri){
 		//수정
-		int res = boardService.update(board);
-		
-		if(res > 0) {
-			//redirect시 request영역 공유 되지 않으므로 RedirectAttributes 이용.
+		int res;
+		try {
+			res = boardService.update(board, files);
 			
-			//model.addAttribute("msg","수정되었습니다.");
-			rttr.addFlashAttribute("msg","수정되었습니다.");
-			
-			// 검색 유지
-			// addAttribute : 컨트롤러에서 처리한 데이터를 뷰로 전달
-			rttr.addAttribute("pageNo", cri.getPageNo());
-			rttr.addAttribute("searchField", cri.getSearchField());
-			rttr.addAttribute("searchWord", cri.getSearchWord());
-			
-			//상세페이지로 이동
-			return "redirect:/board/view?bno="+board.getBno();
-			
-		}else {
-			//model객체로 메세지 담아주기
-			model.addAttribute("msg","수정 중 예외 발생😖");
+			if(res > 0) {
+				//redirect시 request영역 공유 되지 않으므로 RedirectAttributes 이용.
+				
+				//model.addAttribute("msg","수정되었습니다.");
+				rttr.addFlashAttribute("msg","수정되었습니다.");
+				
+				// 검색 유지
+				// addAttribute : 컨트롤러에서 처리한 데이터를 뷰로 전달
+				rttr.addAttribute("pageNo", cri.getPageNo());
+				rttr.addAttribute("searchField", cri.getSearchField());
+				rttr.addAttribute("searchWord", cri.getSearchWord());
+				
+				//상세페이지로 이동
+				return "redirect:/board/view?bno="+board.getBno();
+				
+			} else {
+				//model객체로 메세지 담아주기
+				model.addAttribute("msg","수정 중 예외 발생😖");
+				return "/board/message";
+			}
+		} catch (Exception e) {
+			if(e.getMessage().indexOf("첨부파일") > -1) {
+				model.addAttribute("msg", e.getMessage());
+			} else {
+				model.addAttribute("msg", "수정중 예외사항이 발생 하였습니다.");
+			}
 			return "/board/message";
 		}
-		
-	
 	}
 	
 	@GetMapping("delete")
@@ -182,11 +234,8 @@ public class BoardController {
 			return "redirect:/board/list";
 			
 		}else {
-			model.addAttribute("msg", "삭제중 예외 발생");
+			model.addAttribute("msg", "삭제 중 예외 발생");
 			return "/board/message";
 		}
 	}
-	
-	
-	
 }

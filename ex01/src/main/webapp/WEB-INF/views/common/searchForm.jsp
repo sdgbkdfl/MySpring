@@ -26,7 +26,7 @@
 	    <input type="text" class="form-control" name="searchWord" id="searchWord" placeholder="검색어" value="${pageDto.cri.searchWord}">
 	  </div>
 	  <div class="col-auto">
-	    <button type="submit" class="btn btn-primary mb-3 w-100" onclick="go(1)">검색</button>
+	    <button type="submit" class="btn btn-secondary mb-3 w-100" onclick="go(1)">검색</button>
 	  </div>
  </div>
 </form>

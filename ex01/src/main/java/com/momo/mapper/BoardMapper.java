@@ -2,6 +2,7 @@ package com.momo.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import com.momo.vo.BoardVO;
@@ -25,4 +26,8 @@ public interface BoardMapper {
 	public int update(BoardVO board);
 
 	public int getTotalCnt(Criteria criteria);
+	
+	// 매개 변수 두개 이상은 Param 어노테이션 꼭 붙여줘야 인식됨
+	// 안그러면 첫번째 매개변수만 인식됨
+	public int updateReplyCnt(@Param("bno")int bno, @Param("amount") int amount);
 }

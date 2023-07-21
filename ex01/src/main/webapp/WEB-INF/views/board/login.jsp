@@ -264,7 +264,7 @@
 			
 			if(map.result == 'success'){
 				//로그인 성공 ->list 이동
-				location.href= '/board/list'
+				location.href= map.url
 				alert(signinForm.signUpName.value+"님 환영합니다.")
 				
 			}else{
